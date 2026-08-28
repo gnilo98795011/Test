@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>پلنر فانتزی من</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<meta name="theme-color" content="#5A4B7C">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="پلنر فانتزی">
+<style>
+  html,body{margin:0;padding:0;background:#FAF7FF;}
+  :root{
+    --bg:#FAF7FF;
+    --card:#FFFFFF;
+    --ink:#3A3550;
+    --ink-soft:#7C7594;
+    --plum:#5A4B7C;
+    --lav:#9A8FC2;
+    --lav-soft:#EFEAFA;
+    --rose:#B77B94;
+    --rose-soft:#F7E9EE;
+    --gold:#D8A85A;
+    --green:#5FA37B;
+    --green-soft:#E4F3EA;
+    --red:#C96A6A;
+    --red-soft:#FBEBEB;
+    --line:#E4DEF3;
+  }
+  *{box-sizing:border-box;}
+  .pw-root{
+    direction:rtl;
+    font-family:"Vazirmatn","Tahoma","Segoe UI",Arial,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    min-height:100%;
+    padding:18px 14px 40px;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .pw-bgstar{position:absolute;opacity:.55;pointer-events:none;}
+  .pw-header{
+    text-align:center;
+    padding:8px 0 16px;
+    position:relative;
+  }
+  .pw-header h1{
+    margin:0;
+    font-size:22px;
+    font-weight:800;
+    color:var(--plum);
+    letter-spacing:.5px;
+  }
+  .pw-header p{
+    margin:4px 0 0;
+    font-size:12.5px;
+    color:var(--ink-soft);
+  }
+  .pw-tabs{
+    display:flex;
+    gap:6px;
+    background:var(--lav-soft);
+    border-radius:14px;
+    padding:5px;
+    margin-bottom:16px;
+    position:relative;
+    z-index:2;
+  }
+  .pw-tab{
+    flex:1;
+    text-align:center;
+    padding:9px 4px;
+    border-radius:10px;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--plum);
+    cursor:pointer;
+    transition:background .2s,color .2s;
+    user-select:none;
+  }
+  .pw-tab.active{
+    background:var(--plum);
+    color:#fff;
+    box-shadow:0 3px 10px rgba(90,75,124,.25);
+  }
+  .pw-page{display:none;position:relative;z-index:1;}
+  .pw-page.active{display:block;animation:pwFade .25s ease;}
+  @keyframes pwFade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+  .pw-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:14px;
+    margin-bottom:14px;
+    box-shadow:0 2px 10px rgba(90,75,124,.06);
+  }
+  .pw-card h2{
+    margin:0 0 10px;
+    font-size:14.5px;
+    font-weight:800;
+    color:var(--plum);
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .pw-card h2 .pw-ic{font-size:15px;}
+  .pw-line-input{
+    width:100%;
+    border:none;
+    border-bottom:1.5px solid var(--line);
+    padding:8px 2px;
+    font-size:13.5px;
+    font-family:inherit;
+    color:var(--ink);
+    background:transparent;
+    margin-bottom:6px;
+    outline:none;
+  }
+  .pw-line-input:focus{border-bottom-color:var(--lav);}
+  .pw-task{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 2px;
+    border-bottom:1px dashed var(--line);
+  }
+  .pw-task:last-child{border-bottom:none;}
+  .pw-check{
+    width:19px;height:19px;
+    min-width:19px;
+    border-radius:50%;
+    border:2px solid var(--lav);
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .15s;
+  }
+  .pw-check.done{background:var(--lav);}
+  .pw-check.done:after{content:"✓";color:#fff;font-size:11px;}
+  .pw-task input{
+    flex:1;
+    border:none;background:transparent;
+    font-family:inherit;font-size:13.5px;color:var(--ink);
+    outline:none;
+  }
+  .pw-task input.done-text{color:var(--ink-soft);text-decoration:line-through;}
+  .pw-water{
+    display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:6px 0 4px;
+  }
+  .pw-drop{
+    width:30px;height:30px;
+    border-radius:50% 50% 50% 0;
+    transform:rotate(45deg);
+    border:2px solid #9BB6DE;
+    cursor:pointer;
+    transition:background .15s;
+  }
+  .pw-drop.filled{background:#9BB6DE;}
+  .pw-water-label{text-align:center;font-size:12px;color:var(--ink-soft);margin-top:4px;}
+  textarea.pw-area{
+    width:100%;min-height:64px;
+    border:1.5px dashed var(--line);
+    border-radius:10px;
+    padding:8px;
+    font-family:inherit;font-size:13px;color:var(--ink);
+    background:var(--lav-soft);
+    outline:none;resize:vertical;
+  }
+  .pw-diet-row{
+    display:flex;align-items:center;gap:8px;
+    padding:7px 0;border-bottom:1px dashed var(--line);
+  }
+  .pw-diet-row:last-child{border-bottom:none;}
+  .pw-diet-tag{
+    min-width:66px;font-size:12px;font-weight:700;color:var(--rose);
+    background:var(--rose-soft);border-radius:8px;padding:4px 8px;text-align:center;
+  }
+  .pw-diet-row input{flex:1;border:none;border-bottom:1px solid var(--line);background:transparent;font-family:inherit;font-size:13px;padding:4px 2px;outline:none;color:var(--ink);}
+
+  .pw-exp-list{margin-bottom:10px;}
+  .pw-exp-item{
+    display:flex;align-items:center;gap:8px;
+    padding:8px 0;border-bottom:1px dashed var(--line);
+    font-size:13px;
+  }
+  .pw-exp-item .d{flex:1;color:var(--ink);}
+  .pw-exp-item .a{font-weight:800;}
+  .pw-exp-item .a.inc{color:var(--green);}
+  .pw-exp-item .a.exp{color:var(--red);}
+  .pw-del{
+    width:22px;height:22px;border-radius:50%;
+    border:none;background:var(--lav-soft);color:var(--ink-soft);
+    font-size:13px;cursor:pointer;line-height:1;
+  }
+  .pw-add-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+  .pw-add-row input{
+    border:1.5px solid var(--line);border-radius:9px;padding:8px;
+    font-family:inherit;font-size:12.5px;outline:none;background:#fff;color: var(--ink);
+  }
+  .pw-add-row input.desc{flex:2;min-width:90px;}
+  .pw-add-row input.amt{flex:1;min-width:70px;}
+  .pw-seg{display:flex;border-radius:9px;overflow:hidden;border:1.5px solid var(--line);}
+  .pw-seg button{
+    border:none;background:#fff;padding:8px 10px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;color:var(--ink-soft);
+  }
+  .pw-seg button.sel-inc.on{background:var(--green-soft);color:var(--green);}
+  .pw-seg button.sel-exp.on{background:var(--red-soft);color:var(--red);}
+  .pw-btn{
+    border:none;border-radius:10px;padding:9px 14px;
+    background:var(--plum);color:#fff;font-family:inherit;font-weight:700;font-size:12.5px;
+    cursor:pointer;
+  }
+  .pw-btn.ghost{background:var(--lav-soft);color:var(--plum);}
+  .pw-summary{display:flex;gap:8px;margin-top:10px;}
+  .pw-sum-box{flex:1;border-radius:12px;padding:10px;text-align:center;}
+  .pw-sum-box .v{font-size:15px;font-weight:800;}
+  .pw-sum-box .l{font-size:11px;color:var(--ink-soft);margin-top:2px;}
+  .pw-sum-box.inc{background:var(--green-soft);}
+  .pw-sum-box.inc .v{color:var(--green);}
+  .pw-sum-box.exp{background:var(--red-soft);}
+  .pw-sum-box.exp .v{color:var(--red);}
+  .pw-sum-box.bal{background:var(--lav-soft);}
+  .pw-sum-box.bal .v{color:var(--plum);}
+
+  .pw-trade-card{
+    border:1px solid var(--line);border-radius:13px;padding:10px 12px;margin-bottom:10px;background:#fff;
+  }
+  .pw-trade-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+  .pw-trade-top .sym{font-weight:800;color:var(--plum);font-size:13.5px;}
+  .pw-trade-top .date{font-size:11.5px;color:var(--ink-soft);}
+  .pw-trade-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;font-size:11.5px;color:var(--ink-soft);margin-bottom:6px;}
+  .pw-trade-grid b{color:var(--ink);display:block;font-size:12.5px;}
+  .pw-trade-pl{font-weight:800;font-size:13px;}
+  .pw-trade-pl.pos{color:var(--green);}
+  .pw-trade-pl.neg{color:var(--red);}
+  .pw-trade-reason{font-size:11.5px;color:var(--ink-soft);margin-top:4px;border-top:1px dashed var(--line);padding-top:5px;}
+  .pw-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+  .pw-form-grid input{
+    border:1.5px solid var(--line);border-radius:9px;padding:8px;
+    font-family:inherit;font-size:12.5px;outline:none;color:var(--ink);
+  }
+  .pw-form-grid input.full{grid-column:1 / -1;}
+  .pw-form-grid select{
+    border:1.5px solid var(--line);border-radius:9px;padding:8px;
+    font-family:inherit;font-size:12.5px;outline:none;color:var(--ink);background:#fff;
+  }
+  .pw-form-grid select.full{grid-column:1 / -1;}
+  .pw-empty{text-align:center;color:var(--ink-soft);font-size:12.5px;padding:14px 0;}
+  .pw-note{font-size:11px;color:var(--ink-soft);text-align:center;margin-top:6px;}
+
+  .pw-cal{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:10px 12px 12px;
+    margin-bottom:14px;
+    box-shadow:0 2px 10px rgba(90,75,124,.06);
+  }
+  .pw-cal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .pw-cal-nav{
+    width:28px;height:28px;border-radius:50%;border:none;
+    background:var(--lav-soft);color:var(--plum);font-size:15px;font-weight:800;cursor:pointer;
+  }
+  .pw-cal-month{font-size:14px;font-weight:800;color:var(--plum);}
+  .pw-cal-today{
+    border:none;background:var(--rose-soft);color:var(--rose);
+    font-size:11px;font-weight:700;border-radius:8px;padding:5px 9px;cursor:pointer;
+  }
+  .pw-day-strip{
+    display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;
+    scrollbar-width:none;
+  }
+  .pw-day-strip::-webkit-scrollbar{display:none;}
+  .pw-day-chip{
+    min-width:40px;height:48px;
+    border-radius:12px;
+    background:var(--lav-soft);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-size:13px;font-weight:700;color:var(--ink);
+    cursor:pointer;flex-shrink:0;
+    border:2px solid transparent;
+  }
+  .pw-day-chip .wd{font-size:9.5px;font-weight:600;color:var(--ink-soft);margin-bottom:2px;}
+  .pw-day-chip.today{border-color:var(--gold);}
+  .pw-day-chip.sel{background:var(--plum);color:#fff;}
+  .pw-day-chip.sel .wd{color:#E5DEF5;}
+  .pw-sel-date{
+    text-align:center;font-size:12px;color:var(--plum);font-weight:700;
+    margin-top:8px;background:var(--lav-soft);border-radius:9px;padding:6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="pw-root" id="pwRoot">
+  <svg class="pw-bgstar" style="top:6px;left:10px;width:34px;" viewBox="0 0 100 100"><path d="M50 5 L61 39 L95 50 L61 61 L50 95 L39 61 L5 50 L39 39 Z" fill="#B9A8E0"/></svg>
+  <svg class="pw-bgstar" style="top:60px;right:14px;width:16px;" viewBox="0 0 100 100"><path d="M50 5 L61 39 L95 50 L61 61 L50 95 L39 61 L5 50 L39 39 Z" fill="#D8A85A"/></svg>
+
+  <div class="pw-header">
+    <h1>🌙 پلنر فانتزی من</h1>
+    <p>۵ شهریور تا پایان اسفند ۱۴۰۵</p>
+  </div>
+
+  <div class="pw-cal">
+    <div class="pw-cal-top">
+      <button class="pw-cal-nav" id="calPrev">‹</button>
+      <div class="pw-cal-month" id="calMonthLabel">—</div>
+      <button class="pw-cal-nav" id="calNext">›</button>
+    </div>
+    <div class="pw-day-strip" id="calDayStrip"></div>
+    <div class="pw-sel-date" id="calSelLabel">—</div>
+    <button class="pw-cal-today" id="calTodayBtn" style="margin-top:8px;width:100%;">برو به امروز</button>
+  </div>
+
+  <div class="pw-tabs">
+    <div class="pw-tab active" data-tab="daily">روزانه</div>
+    <div class="pw-tab" data-tab="monthly">ماهانه</div>
+    <div class="pw-tab" data-tab="money">هزینه‌ها</div>
+    <div class="pw-tab" data-tab="trades">معاملات</div>
+  </div>
+
+  <!-- ===== PAGE 1: DAILY ===== -->
+  <div class="pw-page active" id="page-daily">
+    <div class="pw-card">
+      <h2><span class="pw-ic">📘</span> برنامه آموزش و کاری</h2>
+      <input class="pw-line-input" data-k="prog0" placeholder="خط ۱ ...">
+      <input class="pw-line-input" data-k="prog1" placeholder="خط ۲ ...">
+      <input class="pw-line-input" data-k="prog2" placeholder="خط ۳ ...">
+      <input class="pw-line-input" data-k="prog3" placeholder="خط ۴ ...">
+    </div>
+
+    <div class="pw-card">
+      <h2><span class="pw-ic">🏠</span> کارهای منزل</h2>
+      <div id="taskList"></div>
+    </div>
+
+    <div class="pw-card">
+      <h2><span class="pw-ic">💧</span> آب مصرفی و رژیم غذایی</h2>
+      <div class="pw-water" id="waterRow"></div>
+      <div class="pw-water-label" id="waterLabel">۰ از ۸ لیوان</div>
+      <div id="dietList" style="margin-top:12px;border-top:1px dashed var(--line);padding-top:10px;"></div>
+    </div>
+
+    <div class="pw-card">
+      <h2><span class="pw-ic">🌸</span> زمان ورزش</h2>
+      <textarea class="pw-area" id="workoutNote" placeholder="نوع تمرین، مدت زمان، یادداشت..."></textarea>
+    </div>
+  </div>
+
+  <!-- ===== PAGE 1B: MONTHLY OVERVIEW ===== -->
+  <div class="pw-page" id="page-monthly">
+    <div class="pw-cal" style="margin-bottom:14px;">
+      <div class="pw-cal-top" style="margin-bottom:0;">
+        <button class="pw-cal-nav" id="mpPrev">‹</button>
+        <div class="pw-cal-month" id="mpLabel">—</div>
+        <button class="pw-cal-nav" id="mpNext">›</button>
+      </div>
+    </div>
+    <div class="pw-card">
+      <h2><span class="pw-ic">🎯</span> اهداف کلی این ماه</h2>
+      <input class="pw-line-input" data-mk="g0" placeholder="هدف ۱ ...">
+      <input class="pw-line-input" data-mk="g1" placeholder="هدف ۲ ...">
+      <input class="pw-line-input" data-mk="g2" placeholder="هدف ۳ ...">
+      <input class="pw-line-input" data-mk="g3" placeholder="هدف ۴ ...">
+    </div>
+    <div class="pw-card">
+      <h2><span class="pw-ic">📝</span> پلن و یادداشت کلی ماه</h2>
+      <textarea class="pw-area" id="mpNotes" style="min-height:180px;" placeholder="برنامه‌ریزی کلی این ماه..."></textarea>
+    </div>
+  </div>
+
+  <!-- ===== PAGE 2: MONEY ===== -->
+  <div class="pw-page" id="page-money">
+    <div class="pw-card">
+      <h2><span class="pw-ic">💰</span> هزینه‌ها</h2>
+      <div class="pw-exp-list" id="expList"></div>
+      <div class="pw-add-row">
+        <input class="desc" id="expDesc" placeholder="شرح">
+        <input class="amt" id="expAmt" type="number" placeholder="مبلغ" inputmode="numeric">
+        <div class="pw-seg">
+          <button class="sel-inc on" id="segInc">درآمد</button>
+          <button class="sel-exp" id="segExp">هزینه</button>
+        </div>
+        <button class="pw-btn" id="addExpBtn">افزودن</button>
+      </div>
+      <div class="pw-summary">
+        <div class="pw-sum-box inc"><div class="v" id="sumInc">۰</div><div class="l">درآمد</div></div>
+        <div class="pw-sum-box exp"><div class="v" id="sumExp">۰</div><div class="l">هزینه</div></div>
+        <div class="pw-sum-box bal"><div class="v" id="sumBal">۰</div><div class="l">مانده</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE 3: TRADES ===== -->
+  <div class="pw-page" id="page-trades">
+    <div class="pw-card">
+      <h2><span class="pw-ic">✅</span> چک‌لیست معاملاتی</h2>
+      <div id="checklistBox"></div>
+    </div>
+
+    <div class="pw-card">
+      <h2><span class="pw-ic">📈</span> ثبت معامله جدید</h2>
+      <div class="pw-form-grid">
+        <select id="trMarket" class="full">
+          <option value="stock">بورس</option>
+          <option value="gold">صندوق طلا و نقره</option>
+          <option value="forex">فارکس</option>
+        </select>
+        <input id="trSym" placeholder="نام نماد">
+        <input id="trDate" placeholder="تاریخ" type="text">
+        <input id="trEntry" placeholder="قیمت ورود" type="number">
+        <input id="trExit" placeholder="قیمت خروج" type="number">
+        <input id="trE1" placeholder="پله ورود ۱" type="number">
+        <input id="trE2" placeholder="پله ورود ۲" type="number">
+        <input id="trX1" placeholder="پله خروج ۱" type="number">
+        <input id="trX2" placeholder="پله خروج ۲" type="number">
+        <input id="trQty" placeholder="تعداد/حجم" type="number">
+        <input id="trCode" placeholder="کد">
+        <input id="trReason" class="full" placeholder="علت ورود">
+      </div>
+      <button class="pw-btn" id="addTradeBtn" style="width:100%;">افزودن به ژورنال</button>
+    </div>
+
+    <div class="pw-card">
+      <h2><span class="pw-ic">📒</span> تاریخچه معاملات</h2>
+      <div id="tradeList"></div>
+      <div class="pw-summary">
+        <div class="pw-sum-box bal"><div class="v" id="tradeTotal">۰</div><div class="l">جمع سود/ضرر</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pw-note">اطلاعات به‌صورت خودکار ذخیره می‌شود</div>
+</div>
+
+<script>
+(function(){
+  const fa = n => Number(n||0).toLocaleString('fa-IR');
+  const root = document.getElementById('pwRoot');
+
+  // ---------- Persian (Jalali) calendar via Intl, no external libs ----------
+  const MONTH_NAMES = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+  const WEEKDAY_NAMES = ['ی','د','س','چ','پ','ج','ش']; // Sun..Sat short
+  function toPersianParts(date){
+    const fmt = new Intl.DateTimeFormat('en-US-u-ca-persian', {year:'numeric', month:'numeric', day:'numeric'});
+    const parts = fmt.formatToParts(date);
+    const o = {};
+    parts.forEach(p=>{ if(p.type!=='literal') o[p.type]=p.value; });
+    return { y:+o.year, m:+o.month, d:+o.day };
+  }
+  function buildCalendar(targetYear, fromMonth, toMonth, fromDay){
+    const months = {}; // m -> {name, days:[{d, weekday, greg}]}
+    let d = new Date(Date.UTC(2026,0,1));
+    const end = new Date(Date.UTC(2027,3,10));
+    while(d <= end){
+      const p = toPersianParts(d);
+      if(p.y===targetYear && p.m>=fromMonth && p.m<=toMonth && !(p.m===fromMonth && p.d<fromDay)){
+        if(!months[p.m]) months[p.m] = { name: MONTH_NAMES[p.m-1], days: [] };
+        months[p.m].days.push({ d:p.d, weekday: WEEKDAY_NAMES[d.getUTCDay()], greg:new Date(d) });
+      }
+      d = new Date(d.getTime() + 86400000);
+    }
+    return months;
+  }
+  function faGregLabel(dateObj){
+    return new Intl.DateTimeFormat('fa-IR-u-ca-gregory', {day:'numeric', month:'long', year:'numeric'}).format(dateObj);
+  }
+  const CAL_YEAR = 1405, CAL_FROM = 6, CAL_TO = 12, CAL_FROM_DAY = 5;
+  const calendar = buildCalendar(CAL_YEAR, CAL_FROM, CAL_TO, CAL_FROM_DAY);
+  const todayP = toPersianParts(new Date());
+  function inRangeToday(){ return todayP.y===CAL_YEAR && todayP.m>=CAL_FROM && todayP.m<=CAL_TO && !(todayP.m===CAL_FROM && todayP.d<CAL_FROM_DAY); }
+  let curMonth = inRangeToday() ? todayP.m : CAL_FROM;
+  let selDay = { m: curMonth, d: (curMonth===todayP.m && inRangeToday()) ? todayP.d : (curMonth===CAL_FROM ? CAL_FROM_DAY : 1) };
+  const dateKey = (m,d) => m+'-'+d;
+
+  function renderCalendar(){
+    const mo = calendar[curMonth];
+    document.getElementById('calMonthLabel').textContent = (mo ? mo.name : '') + ' ' + fa(CAL_YEAR);
+    document.getElementById('calPrev').style.visibility = curMonth>CAL_FROM ? 'visible':'hidden';
+    document.getElementById('calNext').style.visibility = curMonth<CAL_TO ? 'visible':'hidden';
+    const strip = document.getElementById('calDayStrip'); strip.innerHTML='';
+    (mo ? mo.days : []).forEach(day=>{
+      const chip = document.createElement('div');
+      const isToday = curMonth===todayP.m && day.d===todayP.d && todayP.y===CAL_YEAR;
+      const isSel = curMonth===selDay.m && day.d===selDay.d;
+      chip.className = 'pw-day-chip'+(isToday?' today':'')+(isSel?' sel':'');
+      chip.innerHTML = '<span class="wd">'+day.weekday+'</span>'+fa(day.d);
+      chip.addEventListener('click', ()=>{ selDay = {m:curMonth, d:day.d}; onDateChanged(); });
+      strip.appendChild(chip);
+    });
+    document.getElementById('calSelLabel').textContent = (calendar[selDay.m]?calendar[selDay.m].name:'') + ' ' + fa(selDay.d) + '، ' + fa(CAL_YEAR);
+    const selDayObj = mo ? mo.days.find(x=>x.d===selDay.d) : null;
+    if(selDayObj) document.getElementById('calSelLabel').textContent += ' · ' + faGregLabel(selDayObj.greg);
+    // scroll selected chip into view
+    const selEl = strip.querySelector('.pw-day-chip.sel');
+    if(selEl) selEl.scrollIntoView({inline:'center', block:'nearest'});
+  }
+
+  function setMonth(m){
+    curMonth = m;
+    const days = calendar[curMonth] ? calendar[curMonth].days.map(x=>x.d) : [1];
+    selDay = days.includes(selDay.d) ? {m:curMonth, d:selDay.d} : {m:curMonth, d:days[0]};
+    onDateChanged();
+    renderMonthPlan();
+  }
+  function goToToday(){
+    curMonth = inRangeToday() ? todayP.m : CAL_FROM;
+    selDay = { m: curMonth, d: (curMonth===todayP.m && inRangeToday()) ? todayP.d : (curMonth===CAL_FROM ? CAL_FROM_DAY : 1) };
+    onDateChanged();
+    renderMonthPlan();
+  }
+  document.getElementById('calPrev').addEventListener('click', ()=>{ if(curMonth>CAL_FROM) setMonth(curMonth-1); });
+  document.getElementById('calNext').addEventListener('click', ()=>{ if(curMonth<CAL_TO) setMonth(curMonth+1); });
+  document.getElementById('calTodayBtn').addEventListener('click', goToToday);
+  document.getElementById('mpPrev').addEventListener('click', ()=>{ if(curMonth>CAL_FROM) setMonth(curMonth-1); });
+  document.getElementById('mpNext').addEventListener('click', ()=>{ if(curMonth<CAL_TO) setMonth(curMonth+1); });
+
+  // ---------- storage helpers (device localStorage) ----------
+  async function loadKey(key, fallback){
+    try{
+      const v = localStorage.getItem('pw:'+key);
+      return v ? JSON.parse(v) : fallback;
+    }catch(e){ return fallback; }
+  }
+  async function saveKey(key, value){
+    try{ localStorage.setItem('pw:'+key, JSON.stringify(value)); }
+    catch(e){ console.error('save failed', key, e); }
+  }
+
+  function freshDaily(){
+    return { prog:['','','',''], tasks:['کار ۱','کار ۲','کار ۳','کار ۴','کار ۵','کار ۶','کار ۷','کار ۸'].map(t=>({text:t,done:false})), water:0, workout:'' };
+  }
+  function freshDiet(){
+    return ['صبحانه','میان‌وعده','ناهار','میان‌وعده','شام'].map(t=>({tag:t,val:''}));
+  }
+  function freshMonthPlan(){
+    return { goals:['','','',''], notes:'' };
+  }
+  const CHECKLIST_ITEMS = [
+    'فقط ۲ تا ۳ معامله با فاصله انجام دهم',
+    'هدف سود: ۲ تا ۳ دلار',
+    'خطوط حمایت و مقاومت را مشخص کنم',
+    'صبر کنم تا کندل برگشتی تشکیل شود',
+    'سپس وارد خرید یا فروش شوم',
+    'حد ضرر را حتماً روی ۲٪ قرار دهم',
+    'حد ضرر را همراه با حرکت قیمت جابه‌جا کنم'
+  ];
+  function freshChecklist(){ return CHECKLIST_ITEMS.map(t=>({text:t, done:false})); }
+
+  // ---------- state ----------
+  let dailyAll = {};      // { "m-d": dailyObj }
+  let dietAll = {};       // { "m-d": dietArray }
+  let monthPlanAll = {};  // { m: {goals:[4], notes:''} }
+  let expenses = [];
+  let trades = [];
+  let checklist = freshChecklist();
+  let daily = freshDaily();
+  let dietState = freshDiet();
+  let monthPlan = freshMonthPlan();
+
+  function loadCurrentDay(){
+    const k = dateKey(selDay.m, selDay.d);
+    daily = dailyAll[k] || freshDaily();
+    dietState = dietAll[k] || freshDiet();
+  }
+  function onDateChanged(){
+    loadCurrentDay();
+    renderCalendar();
+    renderDaily(); renderDiet();
+  }
+  function loadMonthPlan(){
+    monthPlan = monthPlanAll[curMonth] || freshMonthPlan();
+  }
+
+  // ---------- tabs ----------
+  document.querySelectorAll('.pw-tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      document.querySelectorAll('.pw-tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.pw-page').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('page-'+tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ---------- DAILY render ----------
+  function renderTasks(){
+    const box = document.getElementById('taskList');
+    box.innerHTML = '';
+    daily.tasks.forEach((t,i)=>{
+      const row = document.createElement('div'); row.className='pw-task';
+      const chk = document.createElement('div'); chk.className='pw-check'+(t.done?' done':'');
+      chk.addEventListener('click', ()=>{ t.done=!t.done; saveDaily(); renderTasks(); });
+      const inp = document.createElement('input'); inp.value=t.text; inp.className = t.done?'done-text':'';
+      inp.addEventListener('input', e=>{ t.text=e.target.value; saveDaily(); });
+      row.appendChild(chk); row.appendChild(inp);
+      box.appendChild(row);
+    });
+  }
+  function renderWater(){
+    const box = document.getElementById('waterRow'); box.innerHTML='';
+    for(let i=0;i<8;i++){
+      const d = document.createElement('div'); d.className='pw-drop'+(i<daily.water?' filled':'');
+      d.addEventListener('click', ()=>{ daily.water = (i+1===daily.water) ? i : i+1; saveDaily(); renderWater(); });
+      box.appendChild(d);
+    }
+    document.getElementById('waterLabel').textContent = fa(daily.water)+' از ۸ لیوان';
+  }
+  function saveDaily(){
+    dailyAll[dateKey(selDay.m, selDay.d)] = daily;
+    saveKey('daily-data', dailyAll);
+  }
+  function saveDiet(){
+    dietAll[dateKey(selDay.m, selDay.d)] = dietState;
+    saveKey('diet-data', dietAll);
+  }
+  function renderDaily(){
+    [0,1,2,3].forEach(i=>{ document.querySelector('[data-k="prog'+i+'"]').value = daily.prog[i]||''; });
+    document.getElementById('workoutNote').value = daily.workout||'';
+    renderTasks(); renderWater();
+  }
+  document.querySelectorAll('.pw-line-input').forEach((el,i)=>{
+    el.addEventListener('input', e=>{ daily.prog[i]=e.target.value; saveDaily(); });
+  });
+  document.getElementById('workoutNote').addEventListener('input', e=>{ daily.workout=e.target.value; saveDaily(); });
+
+  // ---------- DIET render ----------
+  function renderDiet(){
+    const box = document.getElementById('dietList'); box.innerHTML='';
+    dietState.forEach((d,i)=>{
+      const row = document.createElement('div'); row.className='pw-diet-row';
+      const tag = document.createElement('div'); tag.className='pw-diet-tag'; tag.textContent=d.tag;
+      const inp = document.createElement('input'); inp.placeholder='شرح غذا...'; inp.value=d.val;
+      inp.addEventListener('input', e=>{ d.val=e.target.value; saveDiet(); });
+      row.appendChild(tag); row.appendChild(inp);
+      box.appendChild(row);
+    });
+  }
+
+  // ---------- EXPENSES render ----------
+  function renderExpenses(){
+    const box = document.getElementById('expList'); box.innerHTML='';
+    if(!expenses.length){ box.innerHTML = '<div class="pw-empty">هنوز چیزی ثبت نشده</div>'; }
+    expenses.slice().reverse().forEach((e)=>{
+      const realIdx = expenses.indexOf(e);
+      const row = document.createElement('div'); row.className='pw-exp-item';
+      const d = document.createElement('div'); d.className='d'; d.textContent=(e.desc||'—')+(e.dateLabel?(' · '+e.dateLabel):'');
+      const a = document.createElement('div'); a.className='a '+(e.type==='inc'?'inc':'exp'); a.textContent=(e.type==='inc'?'+':'−')+fa(e.amt);
+      const del = document.createElement('button'); del.className='pw-del'; del.textContent='×';
+      del.addEventListener('click', ()=>{ expenses.splice(realIdx,1); saveKey('expenses-data', expenses); renderExpenses(); });
+      row.appendChild(d); row.appendChild(a); row.appendChild(del);
+      box.appendChild(row);
+    });
+    const inc = expenses.filter(e=>e.type==='inc').reduce((s,e)=>s+Number(e.amt||0),0);
+    const exp = expenses.filter(e=>e.type==='exp').reduce((s,e)=>s+Number(e.amt||0),0);
+    document.getElementById('sumInc').textContent = fa(inc);
+    document.getElementById('sumExp').textContent = fa(exp);
+    document.getElementById('sumBal').textContent = fa(inc-exp);
+  }
+  let expType = 'inc';
+  document.getElementById('segInc').addEventListener('click', ()=>{ expType='inc'; document.getElementById('segInc').classList.add('on'); document.getElementById('segExp').classList.remove('on'); });
+  document.getElementById('segExp').addEventListener('click', ()=>{ expType='exp'; document.getElementById('segExp').classList.add('on'); document.getElementById('segInc').classList.remove('on'); });
+  document.getElementById('addExpBtn').addEventListener('click', ()=>{
+    const desc = document.getElementById('expDesc').value.trim();
+    const amt = Number(document.getElementById('expAmt').value);
+    if(!desc || !amt) return;
+    const dateLabel = (calendar[selDay.m]?calendar[selDay.m].name:'') + ' ' + fa(selDay.d);
+    expenses.push({desc, amt, type:expType, m:selDay.m, d:selDay.d, dateLabel});
+    document.getElementById('expDesc').value=''; document.getElementById('expAmt').value='';
+    saveKey('expenses-data', expenses);
+    renderExpenses();
+  });
+
+  // ---------- TRADES render ----------
+  const MARKET_LABEL = { stock:'بورس', gold:'طلا/نقره', forex:'فارکس' };
+  const MARKET_COLOR = { stock:'#9A8FC2', gold:'#D8A85A', forex:'#7CA6C9' };
+  function renderTrades(){
+    const box = document.getElementById('tradeList'); box.innerHTML='';
+    if(!trades.length){ box.innerHTML = '<div class="pw-empty">هنوز معامله‌ای ثبت نشده</div>'; }
+    trades.slice().reverse().forEach((t)=>{
+      const realIdx = trades.indexOf(t);
+      const pl = (Number(t.exit||0)-Number(t.entry||0)) * (Number(t.qty)||1);
+      const mLabel = MARKET_LABEL[t.market] || 'بورس';
+      const mColor = MARKET_COLOR[t.market] || MARKET_COLOR.stock;
+      const card = document.createElement('div'); card.className='pw-trade-card';
+      card.innerHTML = `
+        <div class="pw-trade-top">
+          <span class="sym">${t.sym||'—'} ${t.code?('· '+t.code):''}
+            <span style="font-size:10px;font-weight:700;color:#fff;background:${mColor};border-radius:6px;padding:2px 6px;margin-right:4px;">${mLabel}</span>
+          </span>
+          <span class="date">${t.date||''}</span>
+        </div>
+        <div class="pw-trade-grid">
+          <div>ورود<b>${fa(t.entry)} ${t.e1?('/ پ۱ '+fa(t.e1)):''}${t.e2?(' / پ۲ '+fa(t.e2)):''}</b></div>
+          <div>خروج<b>${fa(t.exit)} ${t.x1?('/ پ۱ '+fa(t.x1)):''}${t.x2?(' / پ۲ '+fa(t.x2)):''}</b></div>
+          <div>تعداد<b>${fa(t.qty||1)}</b></div>
+        </div>
+        <div class="pw-trade-pl ${pl>=0?'pos':'neg'}">${pl>=0?'سود':'ضرر'}: ${fa(Math.abs(pl))}</div>
+        ${t.reason?('<div class="pw-trade-reason">علت ورود: '+t.reason+'</div>'):''}
+      `;
+      const del = document.createElement('button'); del.className='pw-del'; del.textContent='×'; del.style.float='left';
+      del.addEventListener('click', ()=>{ trades.splice(realIdx,1); saveKey('trades-data', trades); renderTrades(); });
+      card.prepend(del);
+      box.appendChild(card);
+    });
+    const total = trades.reduce((s,t)=> s + (Number(t.exit||0)-Number(t.entry||0)) * (Number(t.qty)||1), 0);
+    document.getElementById('tradeTotal').textContent = fa(total);
+  }
+  document.getElementById('addTradeBtn').addEventListener('click', ()=>{
+    const sym = document.getElementById('trSym').value.trim();
+    if(!sym) return;
+    let tDate = document.getElementById('trDate').value.trim();
+    if(!tDate) tDate = (calendar[selDay.m]?calendar[selDay.m].name:'') + ' ' + fa(selDay.d);
+    trades.push({
+      sym, code:document.getElementById('trCode').value.trim(),
+      market:document.getElementById('trMarket').value,
+      date:tDate,
+      entry:document.getElementById('trEntry').value, exit:document.getElementById('trExit').value,
+      e1:document.getElementById('trE1').value, e2:document.getElementById('trE2').value,
+      x1:document.getElementById('trX1').value, x2:document.getElementById('trX2').value,
+      qty:document.getElementById('trQty').value, reason:document.getElementById('trReason').value.trim()
+    });
+    ['trSym','trCode','trDate','trEntry','trExit','trE1','trE2','trX1','trX2','trQty','trReason'].forEach(id=>document.getElementById(id).value='');
+    saveKey('trades-data', trades);
+    renderTrades();
+  });
+
+  // ---------- CHECKLIST render (persistent, not per-date) ----------
+  function renderChecklist(){
+    const box = document.getElementById('checklistBox'); box.innerHTML='';
+    checklist.forEach((item)=>{
+      const row = document.createElement('div'); row.className='pw-task';
+      const chk = document.createElement('div'); chk.className='pw-check'+(item.done?' done':'');
+      chk.addEventListener('click', ()=>{ item.done=!item.done; saveKey('trade-checklist', checklist); renderChecklist(); });
+      const span = document.createElement('div'); span.style.fontSize='13px'; span.style.color='var(--ink)'; span.textContent=item.text;
+      row.appendChild(chk); row.appendChild(span);
+      box.appendChild(row);
+    });
+  }
+
+  // ---------- MONTHLY PLAN render ----------
+  function renderMonthPlan(){
+    document.getElementById('mpLabel').textContent = (calendar[curMonth]?calendar[curMonth].name:'') + ' ' + fa(CAL_YEAR);
+    document.getElementById('mpPrev').style.visibility = curMonth>CAL_FROM ? 'visible':'hidden';
+    document.getElementById('mpNext').style.visibility = curMonth<CAL_TO ? 'visible':'hidden';
+    loadMonthPlan();
+    [0,1,2,3].forEach(i=>{ document.querySelector('[data-mk="g'+i+'"]').value = monthPlan.goals[i]||''; });
+    document.getElementById('mpNotes').value = monthPlan.notes||'';
+  }
+  function saveMonthPlan(){
+    monthPlanAll[curMonth] = monthPlan;
+    saveKey('month-plan-data', monthPlanAll);
+  }
+  document.querySelectorAll('[data-mk]').forEach((el)=>{
+    el.addEventListener('input', e=>{
+      const idx = +el.dataset.mk.replace('g','');
+      monthPlan.goals[idx] = e.target.value;
+      saveMonthPlan();
+    });
+  });
+  document.getElementById('mpNotes').addEventListener('input', e=>{
+    monthPlan.notes = e.target.value;
+    saveMonthPlan();
+  });
+
+  // ---------- init ----------
+  (async function init(){
+    dailyAll = await loadKey('daily-data', {});
+    dietAll = await loadKey('diet-data', {});
+    expenses = await loadKey('expenses-data', []);
+    trades = await loadKey('trades-data', []);
+    checklist = await loadKey('trade-checklist', freshChecklist());
+    monthPlanAll = await loadKey('month-plan-data', {});
+    loadCurrentDay();
+    renderCalendar();
+    renderDaily(); renderDiet(); renderExpenses(); renderTrades(); renderChecklist(); renderMonthPlan();
+  })();
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
+    });
+  }
+})();
+</script>
+</body>
+</html>

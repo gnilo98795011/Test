@@ -1,0 +1,17 @@
+{
+  "name": "پلنر فانتزی من",
+  "short_name": "پلنر فانتزی",
+  "description": "پلنر روزانه، رژیم و هزینه، ژورنال معاملاتی",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAF7FF",
+  "theme_color": "#5A4B7C",
+  "dir": "rtl",
+  "lang": "fa",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
